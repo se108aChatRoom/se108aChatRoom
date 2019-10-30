@@ -51,9 +51,9 @@ app.use(users.routes(), users.allowedMethods())
 app.on('error', (err, ctx) => {
   console.error('server error', err, ctx)
 });
-server.listen(3000, () => {
-  console.log('Application is starting on port 3000')
-})
+// server.listen(3000, () => {
+//   console.log('Application is starting on port 3000')
+// })
 
 
-module.exports = app
+module.exports = server

@@ -1,0 +1,121 @@
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Vue</title>
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.css'>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+        integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+        integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous"></script>
+</head>
+<script src="https://unpkg.com/vue@2.6.10/dist/vue.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/5.5.3/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/5.5.3/firebase-firestore.js"></script>
+<script src="https://unpkg.com/vue-firestore"></script>
+<style>
+    body {
+        background-image: url("https://picsum.photos/id/301/1920/1400");
+        background-repeat: no-repeat;
+        color: white
+    }
+
+    .room {
+        height: 900px;
+        width: 100%;
+        overflow: auto;
+    }
+
+    #start {
+        margin: 600px 800px;
+    }
+</style>
+
+<body>
+    <div id='app' class='text-center'>
+        <div class='room'>
+            <div class='row'>
+                <div class='col-md-2' class='name'>名稱</div>
+                <div class='col-md-10' class='message'>內容</div>
+            </div>
+            <hr>
+            <div v-for="chat in chats_order">
+                <div class='row'>
+                    <div class='col-md-2' class='name'>{{ chat.name }}</div>
+                    <div class='col-md-10' class='message'>{{ chat.message }}</div>
+                </div>
+                <hr>
+            </div>
+        </div>
+        <div class="fixed-bottom">
+            <input type="text" id="name" placeholder="請輸入名稱" v-model:value='name'>
+            <div class="input-group input-group-lg">
+                <input type="text" class="form-control" v-model='message' v-on:keyup.enter="submit">
+                <div class="input-group-append">
+                    <span class="input-group-text" id="inputGroup-sizing-lg" @click='submit'>送出</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        var firebaseConfig = {
+            apiKey: "AIzaSyDJJe0PyBUlWeJmDRAxvcE_vboG5ZpKdk4",
+            authDomain: "note-a5039.firebaseapp.com",
+            databaseURL: "https://note-a5039.firebaseio.com",
+            projectId: "note-a5039",
+            storageBucket: "note-a5039.appspot.com",
+            messagingSenderId: "25229548981",
+            appId: "1:25229548981:web:649809d6a1533b51de4dfc",
+            measurementId: "G-RMYGWJGSMZ"
+        };
+        var defaultProject = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const settings = { timestampsInSnapshots: true };
+        db.settings(settings)
+        new Vue({
+            el: '#app',
+            data: {
+                name: '',
+                message: '',
+                chats: [],
+                chats_order: []
+            },
+            firestore: function () {
+                return {
+                    chats: db.collection('chats'),
+                    chats_order: db.collection('chats').orderBy('created', 'asc')
+                }
+            },
+            mounted() {
+                window.scrollTo(0,10000)
+            },
+            methods: {
+                submit() {
+                    this.$firestore.chats.add({
+                        name: this.name,
+                        message: this.message,
+                        created: new Date()
+                    }).then(() => {
+                        var roomBar = document.querySelector(".room");
+                        document.body.focus();
+                        roomBar.scrollTop = roomBar.scrollHeight;
+                    })
+                    this.message = ''
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
