@@ -6,6 +6,10 @@ const onerror = require('koa-onerror')
 const bodyparser = require('koa-bodyparser')
 const logger = require('koa-logger')
 
+const server = require('http').createServer(app.callback())
+const io = require('socket.io')(server)
+
+
 const index = require('./routes/index')
 const users = require('./routes/users')
 
@@ -24,6 +28,13 @@ app.use(views(__dirname + '/views', {
   extension: 'pug'
 }))
 
+io.on('connection', function(socket){
+  socket.on('chat', function(msg){
+      io.emit('chat',msg);
+  });
+});
+
+
 // logger
 app.use(async (ctx, next) => {
   const start = new Date()
@@ -40,5 +51,9 @@ app.use(users.routes(), users.allowedMethods())
 app.on('error', (err, ctx) => {
   console.error('server error', err, ctx)
 });
+server.listen(3000, () => {
+  console.log('Application is starting on port 3000')
+})
+
 
 module.exports = app

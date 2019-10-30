@@ -1,79 +1,108 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<meta charset="utf-8">
+    <meta charset="utf-8">
 
-<style>
-#block {
-    height: 500px;
-    width: 600px;
-}
+    <style>
+        #block {
+            height: 500px;
+            width: 600px;
+        }
 
-#room {
-    height:450px ;
-    width: 100%;
-    border-style:solid;
-    overflow: auto; 
-}
-input[name="name"] {
-    height: 30px;
-    width: 10%;
-}
-input[name="message"] {
-    height: 30px;
-    width: 80%;
-}
-input[name="submit"] {
-    height: 30px;
-}
+        #room {
+            height: 450px;
+            width: 100%;
+            border-style: solid;
+            overflow: auto;
+        }
 
-.messagebox {
-    
-}
-.namebox {
-    width: 15%;
-    display:inline-block;
-    
-}
+        input[name="name"] {
+            height: 30px;
+            width: 10%;
+        }
 
-</style>
+        input[name="message"] {
+            height: 30px;
+            width: 80%;
+        }
 
-<script>
-       function send() {
-           var form = document.forms["form"];
-           
-           var messagebox = document.createElement("div");
-               messagebox.className = "messagebox";
-           var namebox = document.createElement("span");
-               namebox.className = "namebox";
-           var name = document.createTextNode(form.elements.name.value);
-           var message = document.createTextNode(form.elements.message.value);
+        input[name="submit"] {
+            height: 30px;
+        }
 
-           namebox.appendChild(name);
-           messagebox.appendChild(namebox);
-           messagebox.appendChild(message);
-           room.appendChild(messagebox);
+        .namebox {
+            width: 15%;
+            display: inline-block;
 
-
-       }    
-</script>
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
 </head>
 
 <body>
     <div id="block">
         <div id="room">
-         
+
         </div>
-        
-        <form name="form" id="form" >
-            <input name="name" id="name" type="text" placeholder="暱稱" >
-            <input name="message" id="message"  type="text" placeholder="訊息" >
-            <input name="submit" id="submit"  type="button" value="送出" onclick="send()" >
+
+        <form name="form" id="form">
+            <input name="name" id="name" type="text" placeholder="暱稱">
+            <input name="message" id="message" type="text" placeholder="訊息">
+            <input name="submit" id="submit" type="button" value="送出" onclick="send()">
         </form>
 
-        </div>
+    </div>
 </body>
+<script src="http://cdn.socket.io/socket.io-1.2.0.js"></script>
+<script>
+    function array2string(name, message) {
+        var array = []
+        array.push(name)
+        array.push(message)
+        return array.toString()
+    }
+    $(function () {
+        socket = io('http://localhost:3000')
+        socket.on('chat', function (msg) {
+            var form = document.forms["form"];
+            console.log('msg' + msg)
+            msg_array = msg.split(",");
+            console.log(msg_array)
+            var messagebox = document.createElement("div");
+            messagebox.className = "messagebox";
+            var namebox = document.createElement("span");
+            namebox.className = "namebox";
+            var name = document.createTextNode(msg_array[0]);
+            var message = document.createTextNode(msg_array[1]);
 
+            namebox.appendChild(name);
+            messagebox.appendChild(namebox);
+            messagebox.appendChild(message);
+            room.appendChild(messagebox);
+
+            var roomBar = document.getElementById("room");
+            document.body.focus();
+            roomBar.scrollTop = roomBar.scrollHeight;
+        });
+    });
+
+    function send() {
+        var message = document.getElementById("message").value
+        var name = document.getElementById("name").value
+        var string = array2string(name,message)
+        socket.emit('chat', string);
+        document.getElementById("message").value = "";
+    }
+
+
+    $('#message').keydown(function (event) {
+        if (event.which == 13) {
+            send();
+        }
+    })
+
+</script>
 
 </html>
