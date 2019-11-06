@@ -27,3 +27,5 @@ $ mocha
 1. koa-generation
 2. socket.io
 3. firebase
+4. puppeteer
+5. mocha
