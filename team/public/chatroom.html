@@ -3,10 +3,17 @@
 
 <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
     <style>
         #block {
             height: 500px;
@@ -51,26 +58,23 @@
         <form name="form" id="form">
             <input name="name" id="name" type="text" placeholder="暱稱">
             <input name="message" id="message" type="text" placeholder="訊息">
-            <input name="submit" id="submit" type="button"  value="送出" onclick="send()">
+            <input name="submit" id="submit" type="button" value="送出" onclick="send()">
         </form>
 
     </div>
 </body>
 <script src="http://cdn.socket.io/socket.io-1.2.0.js"></script>
+<script src='Asert_herf.js'></script>
+<script src='dataToString.js'></script>
 <script>
-    function array2string(name, message) {
-        var array = []
-        array.push(name)
-        array.push(message)
-        return array.toString()
-    }
+    
     $(function () {
         socket = io('http://localhost:3000')
         socket.on('chat', function (msg) {
             var form = document.forms["form"];
-            console.log('msg' + msg)
+            // console.log('msg' + msg)
             msg_array = msg.split(",");
-            console.log(msg_array)
+            // console.log(msg_array)
             var messagebox = document.createElement("div");
             messagebox.className = "messagebox";
             var namebox = document.createElement("span");
@@ -80,9 +84,16 @@
 
             namebox.appendChild(name);
             messagebox.appendChild(namebox);
-            messagebox.appendChild(message);
-            room.appendChild(messagebox);
-
+            if (asert(msg_array[1]) == true) {
+                var a_label = document.createElement('a')
+                a_label.setAttribute('href', msg_array[1])
+                a_label.appendChild(message)
+                messagebox.appendChild(a_label)
+            }
+            else
+                messagebox.appendChild(message);
+            room.appendChild(messagebox)
+            // roll 
             var roomBar = document.getElementById("room");
             document.body.focus();
             roomBar.scrollTop = roomBar.scrollHeight;
@@ -92,11 +103,11 @@
     function send() {
         var message = document.getElementById("message").value
         var name = document.getElementById("name").value
-        if(message.length == 0 )
-        return console.log('請輸入文字後再送出')
-        if(name.length == 0 )
-        return console.log('請輸入名稱再送出')
-        var string = array2string(name,message)
+        if (message.length == 0)
+            return console.log('請輸入文字後再送出')
+        if (name.length == 0)
+            return console.log('請輸入名稱再送出')
+        var string = array2string(name, message)
         socket.emit('chat', string);
         document.getElementById("message").value = "";
     }
