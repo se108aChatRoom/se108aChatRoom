@@ -27,6 +27,10 @@
             overflow: auto;
         }
 
+        #roomtable {
+            width: 100%;
+        }
+
         input[name="name"] {
             height: 30px;
             width: 10%;
@@ -42,10 +46,25 @@
         }
 
         .namebox {
-            width: 15%;
-            display: inline-block;
+          width: 5rem;
 
+        
         }
+
+        .messagebox {
+            word-break:break-all
+        }
+
+        .box:nth-child(odd){
+	    background-color:#eaf6e5;
+	    }
+
+        tr {
+            width: 1000px;
+        }
+
+
+
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
@@ -54,6 +73,8 @@
 <body>
     <div id="block">
         <div id="room">
+            <table id="roomtable">
+            </table>
         </div>
         <form name="form" id="form">
             <input name="name" id="name" type="text" placeholder="暱稱">
@@ -75,10 +96,13 @@
             // console.log('msg' + msg)
             msg_array = msg.split(",");
             // console.log(msg_array)
-            var messagebox = document.createElement("div");
-            messagebox.className = "messagebox";
-            var namebox = document.createElement("span");
-            namebox.className = "namebox";
+
+            var box = document.createElement("tr")
+                box.className = "box";
+            var messagebox = document.createElement("td");
+                messagebox.className = "messagebox";
+            var namebox = document.createElement("td");
+                namebox.className = "namebox";
             var name = document.createTextNode(msg_array[0]);
             var message = document.createTextNode(msg_array[1]);
 
@@ -92,7 +116,9 @@
             }
             else
                 messagebox.appendChild(message);
-            room.appendChild(messagebox)
+            box.appendChild(namebox);
+            box.appendChild(messagebox);
+            roomtable.appendChild(box);
             // roll 
             var roomBar = document.getElementById("room");
             document.body.focus();
