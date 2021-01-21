@@ -23,7 +23,7 @@
     "koa-views": "^6.2.0",
     "pug": "^2.0.3",
     "puppeteer": "^2.0.0",
-    "socket.io": "^1.7.4"
+    "socket.io": "^2.4.0"
   },
   "devDependencies": {
     "nodemon": "^1.19.1"
